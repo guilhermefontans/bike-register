@@ -11,7 +11,7 @@ class ViewBikeAction extends BikeAction
     protected function action(): Response
     {
         $bikeId = (int) $this->resolveArg('id');
-        $bike = $this->bikeRepository->findUserById($bikeId);
+        $bike = $this->bikeRepository->findBikeById($bikeId);
 
         $this->logger->info("Bike of id `${bikeId}` was viewed.");
         return $this->respondWithData($bike);

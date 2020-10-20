@@ -2,6 +2,7 @@
 
 namespace App\Domain\Bike;
 
+use App\Domain\Factory\EntityInterface;
 use JsonSerializable;
 
 /**
@@ -9,7 +10,7 @@ use JsonSerializable;
  *
  * @package App\Domain\Bike
  */
-class Bike implements JsonSerializable
+class Bike implements JsonSerializable, EntityInterface
 {
     /**
      * @var int|null
@@ -71,12 +72,21 @@ class Bike implements JsonSerializable
     public function jsonSerialize()
     {
         return [
+            "id"             => $this->id,
             "descricao"      => $this->description,
             "modelo"         => $this->model,
-            "preço"          => $this->price,
+            "preco"          => $this->price,
             "data-compra"    => $this->purchaseDate->format('Y-m-d'),
             "nome-comprador" => $this->buyerName,
             "nome-loja"      => $this->storeName
         ];
+    }
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
     }
 }

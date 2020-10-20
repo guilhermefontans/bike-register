@@ -16,7 +16,7 @@ return function (ContainerBuilder $containerBuilder) {
             ],
             'db' => [
                 'driver' => 'pdo_mysql',
-                'host' => '172.17.0.2',
+                'host' => 'db',
                 'dbname' => 'esales',
                 'user' => 'root',
                 'password' => 'esales',
