@@ -18,6 +18,7 @@ class ListBikesAction extends BikeAction
      */
     protected function action(): Response
     {
-        // TODO: Implement action() method.
+        $bikes = $this->bikeRepository->findAll();
+        return $this->respondWithData($bikes);
     }
 }

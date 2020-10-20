@@ -4,6 +4,7 @@ namespace App\Infrastructure\Persistence\Bike;
 
 use App\Domain\Bike\Bike;
 use App\Domain\Bike\BikeNotFoundException;
+use Doctrine\DBAL\Connection;
 
 /**
  * Class BikeRepository
@@ -12,13 +13,33 @@ use App\Domain\Bike\BikeNotFoundException;
  */
 class BikeRepository implements \App\Domain\Bike\BikeRepository
 {
+    /**
+     * @var Connection
+     */
+    private $connection;
+
+    /**
+     * BikeRepository constructor.
+     *
+     * @param Connection $connection
+     */
+    public function __construct(Connection $connection)
+    {
+        $this->connection = $connection;
+    }
 
     /**
      * @return Bike[]
      */
     public function findAll(): array
     {
-        // TODO: Implement findAll() method.
+        $queryBuilder = $this->connection->createQueryBuilder();
+        $rows = $queryBuilder
+            ->select('id', 'nome')
+            ->from('bikes')
+            ->execute()
+            ->fetchAll();
+        return $rows;
     }
 
     /**
@@ -26,8 +47,23 @@ class BikeRepository implements \App\Domain\Bike\BikeRepository
      * @return Bike
      * @throws BikeNotFoundException
      */
-    public function findUserOfId(int $id): Bike
+    public function findUserById(int $id): Bike
     {
-        // TODO: Implement findUserOfId() method.
+        $queryBuilder = $this->connection->createQueryBuilder();
+
+        $row = $queryBuilder->select('id', 'name')
+            ->from('bikes')
+            ->where('id = :id')
+            ->setParameter(':id', 1)
+            ->execute()
+            ->fetch();
+
+        return new Bike($row['id'], $row['name']);
+    }
+
+    public function update(array $data)
+    {
+        $values = ['nome' => $data['nome']];
+        $this->connection->update('bikes', $values, ['id' => 1]);
     }
 }

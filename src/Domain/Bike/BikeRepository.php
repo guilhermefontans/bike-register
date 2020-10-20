@@ -17,5 +17,5 @@ interface BikeRepository
      * @return Bike
      * @throws BikeNotFoundException
      */
-    public function findUserOfId(int $id): Bike;
+    public function findUserById(int $id): Bike;
 }

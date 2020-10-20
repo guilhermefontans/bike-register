@@ -10,11 +10,10 @@ class ViewBikeAction extends BikeAction
 {
     protected function action(): Response
     {
-        $userId = (int) $this->resolveArg('id');
-        $user = $this->bikeRepository->findUserOfId($userId);
+        $bikeId = (int) $this->resolveArg('id');
+        $bike = $this->bikeRepository->findUserById($bikeId);
 
-        $this->logger->info("User of id `${userId}` was viewed.");
-
-        return $this->respondWithData($user);
+        $this->logger->info("Bike of id `${bikeId}` was viewed.");
+        return $this->respondWithData($bike);
     }
 }

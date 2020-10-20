@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 use App\Application\Actions\Bike\ListBikesAction;
-use App\Application\Actions\User\ViewUserAction;
+use App\Application\Actions\Bike\ViewBikeAction;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
@@ -21,6 +21,6 @@ return function (App $app) {
 
     $app->group('/bikes', function (Group $group) {
         $group->get('', ListBikesAction::class);
-        $group->get('/{id}', ViewUserAction::class);
+        $group->get('/{id}', ViewBikeAction::class);
     });
 };
