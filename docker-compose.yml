@@ -6,13 +6,23 @@ volumes:
 
 services:
     slim:
-        image: php:7-alpine
+        image: php:7.4
         working_dir: /var/www
-        command: php -S 0.0.0.0:8080 -t public
+        command: php -S 0.0.0.0:8000 -t public
         environment:
             docker: "true"
         ports:
-            - 8080:8080
+            - 8000:8000
         volumes:
             - .:/var/www
             - logs:/var/www/logs
+    db:
+        image: mariadb
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: esales
+    adminer:
+        image: adminer
+        restart: always
+        ports:
+            - 8080:8080
