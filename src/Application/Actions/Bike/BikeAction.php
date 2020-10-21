@@ -3,6 +3,7 @@
 namespace App\Application\Actions\Bike;
 
 use App\Application\Actions\Action;
+use App\Domain\Validator\ValidatorInterface;
 use App\Infrastructure\Persistence\Bike\BikeRepository;
 use Psr\Log\LoggerInterface;
 
@@ -19,15 +20,19 @@ abstract class BikeAction extends Action
      */
     protected $bikeRepository;
 
+    protected $validator;
+
     /**
      * BikeAction constructor.
      *
      * @param LoggerInterface $logger
+     * @param ValidatorInterface $validator
      * @param BikeRepository $bikeRepository
      */
-    public function __construct(LoggerInterface $logger, BikeRepository $bikeRepository)
+    public function __construct(LoggerInterface $logger, ValidatorInterface $validator, BikeRepository $bikeRepository)
     {
         parent::__construct($logger);
+        $this->validator = $validator;
         $this->bikeRepository = $bikeRepository;
     }
 }
