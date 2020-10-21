@@ -48,8 +48,6 @@ class BikeRepository extends AbstractRepository implements \App\Domain\Bike\Bike
             ->execute()
             ->fetchAll();
 
-
-
         return $rows;
     }
 
