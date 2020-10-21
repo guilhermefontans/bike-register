@@ -6,6 +6,11 @@ namespace App\Application\Actions\Bike;
 
 use Psr\Http\Message\ResponseInterface as Response;
 
+/**
+ * Class ViewBikeAction
+ *
+ * @package App\Application\Actions\Bike
+ */
 class ViewBikeAction extends BikeAction
 {
     protected function action(): Response

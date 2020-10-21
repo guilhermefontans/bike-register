@@ -5,16 +5,10 @@ namespace App\Application\Actions\Bike;
 
 
 use App\Domain\DomainException\DomainRecordNotFoundException;
-use App\Domain\Factory\EntityInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Exception\HttpBadRequestException;
 
-/**
- * Class CreateBikeAction
- *
- * @package App\Application\Actions\Bike
- */
-class CreateBikeAction extends BikeAction
+class PatchBikeAction extends BikeAction
 {
 
     /**
@@ -24,12 +18,11 @@ class CreateBikeAction extends BikeAction
      */
     protected function action(): Response
     {
+        $bikeId = (int) $this->resolveArg('id');
         $data = $this->getFormData();
+        $this->bikeRepository->patchBike($bikeId, $data);
 
-        /** @var EntityInterface $bike */
-        $bike = $this->bikeRepository->createBike($data);
-
-        $this->logger->info("Bike of id {$bike->getId()} was created.");
-        return $this->respondWithData($bike, 201);
+        $this->logger->info("Bike of id `${bikeId}` was patched.");
+        return $this->respondWithData(null, 204);
     }
 }

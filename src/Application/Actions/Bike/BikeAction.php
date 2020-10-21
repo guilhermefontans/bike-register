@@ -6,6 +6,11 @@ use App\Application\Actions\Action;
 use App\Infrastructure\Persistence\Bike\BikeRepository;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Class BikeAction
+ *
+ * @package App\Application\Actions\Bike
+ */
 abstract class BikeAction extends Action
 {
 

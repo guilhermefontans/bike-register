@@ -1,13 +1,15 @@
 <?php
 
-
 namespace App\Application\Actions\Bike;
-
 
 use App\Domain\DomainException\DomainRecordNotFoundException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Exception\HttpBadRequestException;
 
+/**
+ * Class ListBikesAction
+ * @package App\Application\Actions\Bike
+ */
 class ListBikesAction extends BikeAction
 {
 
@@ -19,6 +21,9 @@ class ListBikesAction extends BikeAction
     protected function action(): Response
     {
         $bikes = $this->bikeRepository->findAll();
+        $total = count($bikes);
+
+        $this->logger->info("Listing {$total} bikes.");
         return $this->respondWithData($bikes);
     }
 }

@@ -101,9 +101,41 @@ class BikeRepository extends AbstractRepository implements \App\Domain\Bike\Bike
         return $this->factory->build(array_merge(['id' => $lastId], $values));
     }
 
-    public function update(array $data)
+    public function deleteBike(int $id): void
     {
-        $values = ['nome' => $data['nome']];
-        $this->connection->update('bikes', $values, ['id' => 1]);
+        $this->connection->delete('bikes', ['id' => $id]);
+    }
+
+    public function updateBikeById(int $id, array $data)
+    {
+        $values = [
+            'description'   => $data['descricao'],
+            'model'         => $data['modelo'],
+            'price'         => $data['preco'],
+            'purchase_date' => $data['data-compra'],
+            'buyer_name'    => $data['nome-comprador'],
+            'store_name'    => $data['nome-loja']
+        ];
+
+        $this->connection->update('bikes', $values, ['id' => $id]);
+        return $this->factory->build(array_merge(['id' => $id], $values));
+    }
+
+    public function patchBike(int $id, array $data)
+    {
+        $values = [
+            'description'   => $data['descricao'] ?: null,
+            'model'         => $data['modelo'] ?: null,
+            'price'         => $data['preco'] ?: null,
+            'purchase_date' => $data['data-compra']?: null,
+            'buyer_name'    => $data['nome-comprador'] ?: null,
+            'store_name'    => $data['nome-loja'] ?: null
+        ];
+
+        $values = array_filter($values, function ($item) {
+            return !is_null($item);
+        });
+
+        $this->connection->update('bikes', $values, ['id' => $id]);
     }
 }
