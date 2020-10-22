@@ -46,7 +46,7 @@ class ValidatorMiddleware implements MiddlewareInterface
     ): ResponseInterface {
         try {
             return $handler->handle($request);
-        } catch(NestedValidationException $exception) {
+        } catch (NestedValidationException $exception) {
             $messages = [];
             /** @var ValidationException $message */
             foreach($exception->getIterator() as $message) {

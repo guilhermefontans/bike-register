@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 use DI\ContainerBuilder;
+use Doctrine\Common\Cache\Cache;
+use Doctrine\Common\Cache\PhpFileCache;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
@@ -33,9 +35,9 @@ return function (ContainerBuilder $containerBuilder) {
 
             return DriverManager::getConnection($connectionParams, $config);
         },
-
-        \PDO::class => function (ContainerInterface $container) {
-            return $container->get(Connection::class)->getWrappedConnection();
+        Cache::class => function (ContainerInterface $container) {
+            $settings = $container->get('settings');
+            return new PhpFileCache($settings['cache']['path']);
         },
     ]);
 };

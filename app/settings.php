@@ -14,6 +14,9 @@ return function (ContainerBuilder $containerBuilder) {
                 'path' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__ . '/../logs/app.log',
                 'level' => Logger::DEBUG,
             ],
+            'cache' => [
+                'path' =>  __DIR__ . '/../var/cache/'
+            ],
             'db' => [
                 'driver' => 'pdo_mysql',
                 'host' => 'db',

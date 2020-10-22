@@ -7,6 +7,7 @@ use App\Domain\Bike\BikeNotFoundException;
 use App\Domain\Factory\Bike\BikeFactory;
 use App\Domain\Factory\EntityInterface;
 use App\Infrastructure\Persistence\AbstractRepository;
+use Doctrine\Common\Cache\Cache;
 use Doctrine\DBAL\Connection;
 use Psr\Log\LoggerInterface;
 
@@ -23,10 +24,11 @@ class BikeRepository extends AbstractRepository implements \App\Domain\Bike\Bike
      * @param Connection $connection
      * @param LoggerInterface $logger
      * @param BikeFactory $factory
+     * @param Cache $cacheProvider
      */
-    public function __construct(Connection $connection, LoggerInterface $logger, BikeFactory $factory)
+    public function __construct(Connection $connection, LoggerInterface $logger, BikeFactory $factory, Cache $cacheProvider)
     {
-        parent::__construct($connection, $logger, $factory);
+        parent::__construct($connection, $logger, $factory, $cacheProvider);
     }
 
     /**
@@ -36,15 +38,8 @@ class BikeRepository extends AbstractRepository implements \App\Domain\Bike\Bike
     {
         $queryBuilder = $this->connection->createQueryBuilder();
         $rows = $queryBuilder
-            ->select(
-                'id',
-                'description',
-                'model',
-                'price',
-                'purchase_date',
-                'buyer_name',
-                'store_name'
-            )->from('bikes')
+            ->select('*')
+            ->from('bikes')
             ->execute()
             ->fetchAll();
 
@@ -58,18 +53,18 @@ class BikeRepository extends AbstractRepository implements \App\Domain\Bike\Bike
      */
     public function findBikeById(int $id): Bike
     {
+        $key = 'bike_' . $id;
+        if ($this->cacheProvider->contains($key)) {
+            $this->logger->info("Getting Bike id #{$id} from cache");
+            return $this->cacheProvider->fetch($key);
+        }
+
+        $this->cacheProvider->save('cache_id', 'my_data');
         $queryBuilder = $this->connection->createQueryBuilder();
 
         $row = $queryBuilder
-            ->select(
-                'id',
-                'description',
-                'model',
-                'price',
-                'purchase_date',
-                'buyer_name',
-                'store_name'
-            )->from('bikes')
+            ->select('*')
+            ->from('bikes')
             ->where('id = :id')
             ->setParameter(':id', $id)
             ->execute()
@@ -79,7 +74,12 @@ class BikeRepository extends AbstractRepository implements \App\Domain\Bike\Bike
             throw new BikeNotFoundException();
         }
 
-        return $this->factory->build($row);
+        $entity = $this->factory->build($row);
+
+        $this->logger->info("Getting Bike id #{$id} from data base");
+        $this->cacheProvider->save($key, $entity, self::DEFAULT_LIFE_TIME_CACHE);
+
+        return $entity;
     }
 
     public function createBike(array $data): EntityInterface
@@ -93,15 +93,46 @@ class BikeRepository extends AbstractRepository implements \App\Domain\Bike\Bike
             'store_name'    => $data['nome-loja']
         ];
 
-        $this->connection->insert('bikes', $values);
+        $queryBuilder = $this->connection->createQueryBuilder();
+        $queryBuilder
+            ->insert('bikes')
+            ->values([
+                'description'   => ':description',
+                'model'         => ':model',
+                'price'         => ':price',
+                'purchase_date' => ':purchase_date',
+                'buyer_name'    => ':buyer_name',
+                'store_name'    => ':store_name'
+            ])
+            ->setParameters([
+                'description'   => $data['descricao'],
+                'model'         => $data['modelo'],
+                'price'         => $data['preco'],
+                'purchase_date' => $data['data-compra'],
+                'buyer_name'    =>  $data['nome-comprador'],
+                'store_name'    => $data['nome-loja']
+            ]);
+
+        $this->logger->info('This SQL will be executed to create the bike {sql}', [
+            'sql' => $queryBuilder->getSQL()
+        ]);
+        $queryBuilder->execute();
         $lastId = $this->connection->lastInsertId();
 
         return $this->factory->build(array_merge(['id' => $lastId], $values));
     }
 
+
+    /**
+     * @param int $id
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function deleteBike(int $id): void
     {
         $this->connection->delete('bikes', ['id' => $id]);
+        $this->logger->info("This Bike Id #{id} was excluded", [
+            'id' => $id
+        ]);
     }
 
     public function updateBikeById(int $id, array $data)
@@ -115,19 +146,37 @@ class BikeRepository extends AbstractRepository implements \App\Domain\Bike\Bike
             'store_name'    => $data['nome-loja']
         ];
 
-        $this->connection->update('bikes', $values, ['id' => $id]);
+        $queryBuilder = $this->connection->createQueryBuilder();
+        $queryBuilder
+            ->update('bikes')
+            ->set('description', ':description')
+            ->set('model', ':model')
+            ->set('model', ':model')
+            ->set('price', ':price')
+            ->set('purchase_date', ':purchase_date')
+            ->set('buyer_name', ':buyer_name')
+            ->set('store_name',':store_name')
+            ->setParameters([
+                'description'   => $data['descricao'],
+                'model'         => $data['modelo'],
+                'price'         => $data['preco'],
+                'purchase_date' => $data['data-compra'],
+                'buyer_name'    =>  $data['nome-comprador'],
+                'store_name'    => $data['nome-loja']
+            ])->where("id={$id}")
+            ->execute();
         return $this->factory->build(array_merge(['id' => $id], $values));
     }
 
     public function patchBike(int $id, array $data)
     {
         $values = [
-            'description'   => $data['descricao'] ?: null,
-            'model'         => $data['modelo'] ?: null,
-            'price'         => $data['preco'] ?: null,
-            'purchase_date' => $data['data-compra']?: null,
-            'buyer_name'    => $data['nome-comprador'] ?: null,
-            'store_name'    => $data['nome-loja'] ?: null
+            'description'   => isset($data['descricao']) ? $data['descricao'] : null,
+            'model'         => isset($data['modelo']) ? $data['modelo'] : null,
+            'price'         => isset($data['preco']) ? $data['preco'] : null,
+            'purchase_date' => isset($data['data-compra']) ? $data['data-compra']: null,
+            'buyer_name'    => isset($data['nome-comprador']) ? $data['nome-comprador'] : null,
+            'store_name'    => isset($data['nome-loja']) ? $data['nome-loja']: null
         ];
 
         $values = array_filter($values, function ($item) {

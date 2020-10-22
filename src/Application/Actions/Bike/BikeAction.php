@@ -20,6 +20,9 @@ abstract class BikeAction extends Action
      */
     protected $bikeRepository;
 
+    /**
+     * @var ValidatorInterface
+     */
     protected $validator;
 
     /**
@@ -29,8 +32,11 @@ abstract class BikeAction extends Action
      * @param ValidatorInterface $validator
      * @param BikeRepository $bikeRepository
      */
-    public function __construct(LoggerInterface $logger, ValidatorInterface $validator, BikeRepository $bikeRepository)
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        ValidatorInterface $validator,
+        BikeRepository $bikeRepository
+    ) {
         parent::__construct($logger);
         $this->validator = $validator;
         $this->bikeRepository = $bikeRepository;
