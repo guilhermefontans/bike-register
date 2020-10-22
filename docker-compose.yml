@@ -9,16 +9,18 @@ services:
         build: .
         working_dir: /var/www
         command: php -S 0.0.0.0:8000 -t public
+        env_file: .env
         environment:
             docker: "true"
         ports:
-            - 8000:8000
+            - 8000:${HOST_PORT}
         volumes:
             - .:/var/www
             - logs:/var/www/logs
     db:
         image: mariadb
         restart: always
+        env_file: .env
         volumes:
             - ./dumps:/docker-entrypoint-initdb.d/:ro
         environment:

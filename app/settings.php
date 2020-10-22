@@ -15,14 +15,14 @@ return function (ContainerBuilder $containerBuilder) {
                 'level' => Logger::DEBUG,
             ],
             'cache' => [
-                'path' =>  __DIR__ . '/../var/cache/'
+                'path' => __DIR__ . '/../var/cache/'
             ],
             'db' => [
                 'driver' => 'pdo_mysql',
-                'host' => 'db',
-                'dbname' => 'esales',
-                'user' => 'root',
-                'password' => 'esales',
+                'host' => getenv('MYSQL_HOST'),
+                'dbname' => getenv('MYSQL_DATABASE'),
+                'user' => getenv('MYSQL_USER'),
+                'password' => getenv('MYSQL_PASSWORD'),
                 'charset' => 'utf8mb4',
                 'collation' => 'utf8mb4_unicode_ci',
                 'driverOptions' => [
