@@ -50,6 +50,10 @@ $ docker-compose up -d
 ```sh
 $ docker run  --rm  --volume $PWD:/app --user $(id -u):$(id -g)   composer install --ignore-platform-reqs
 ```
+4. Importar o dump da base de dados
+```
+$ docker-compose exec -T db mysql  -pesales   < dumps/InitDB.sql
+```
  
 Após efetuar esses passos, acessar o seguinte endereço em seu navegador: http://localhost:8000
  
