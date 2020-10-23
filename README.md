@@ -9,7 +9,7 @@ se tratar de um framework simples e sem muitas dependências, no qual atende mui
 O framework escolhido também respeita as recomendações de padronização feitas pela [comunidade PHP](https://www.php-fig.org/)
 através de suas [PSRs](https://www.php-fig.org/psr), o que facilita a utilização de componentes feitos pela comunidade de desenvolvedores.
 
-
+#### Estrutura
 A estrutura de pastas que estão dentro da pasta `src` mantém as camadas separadas, facilitando o entendimento do que cada uma é responsável:
 ```
 - Application: Este módulo é o resposável por manter os arquivos que irão tratar a comunicação com o usuário, como
