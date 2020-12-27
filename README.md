@@ -198,3 +198,5 @@ Visualizando os logs
 ```
 docker-compose logs -f slim
 ```
+
+A documentação da api criada também pode ser visualizada em http://localhost:8000/docs/v1
