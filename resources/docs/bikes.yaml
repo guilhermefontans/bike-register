@@ -1,0 +1,141 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Swagger Bikes
+  license:
+    name: MIT
+servers:
+  - url: http://localhost:8000
+paths:
+  /bikes:
+    get:
+      summary: List all bikes
+      operationId: listBikes
+      tags:
+        - bikes
+      responses:
+        '200':
+          description: A paged array of bikes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bikes"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Create a bike
+      operationId: createBike
+      tags:
+        - bikes
+      parameters:
+        - name: descricao
+          in: body
+          required: true
+          description: The bike's model
+          schema:
+            $ref: "#/components/schemas/BikeCreate"
+
+      responses:
+        '201':
+          description: The new bike created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bike"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /bikes/{bikeId}:
+    get:
+      summary: Info for a specific bike
+      operationId: showBikeById
+      tags:
+        - bikes
+      parameters:
+        - name: bikeId
+          in: path
+          required: true
+          description: The id of the bike to retrieve
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bike"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Bike:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        description:
+          type: string
+        model:
+          type: string
+        price:
+          type: number
+        purchase_date:
+          type: string
+        buyer_name:
+          type: string
+        store_name:
+          type: string
+    BikeCreate:
+      type: object
+      required:
+        - nome
+        - descricao
+        - modelo
+        - preco
+        - data-compra
+        - nome-comprador
+        - nome-loja
+      properties:
+        descricao:
+          type: string
+        modelo:
+          type: string
+        preco:
+          type: number
+        data-compra:
+          type: string
+        nome-comprador:
+          type: string
+        nome-loja:
+          type: string
+    Bikes:
+      type: array
+      items:
+        $ref: "#/components/schemas/Bike"
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string

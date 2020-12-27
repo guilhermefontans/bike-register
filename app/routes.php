@@ -7,6 +7,7 @@ use App\Application\Actions\Bike\ListBikesAction;
 use App\Application\Actions\Bike\PatchBikeAction;
 use App\Application\Actions\Bike\UpdateBikeAction;
 use App\Application\Actions\Bike\ViewBikeAction;
+use App\Application\Actions\Docs\SwaggerUiAction;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
@@ -22,6 +23,8 @@ return function (App $app) {
         $response->getBody()->write('Hello world!');
         return $response;
     });
+
+    $app->get('/docs/v1', SwaggerUiAction::class);
 
     $app->group('/bikes', function (Group $group) {
         $group->get('', ListBikesAction::class);

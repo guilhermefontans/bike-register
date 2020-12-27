@@ -12,6 +12,7 @@ use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Slim\Views\Twig;
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
@@ -38,6 +39,16 @@ return function (ContainerBuilder $containerBuilder) {
         Cache::class => function (ContainerInterface $container) {
             $settings = $container->get('settings');
             return new PhpFileCache($settings['cache']['path']);
+        },
+        Twig::class => function (ContainerInterface $container) {
+            $settings = $container->get('settings');
+            $twigSettings = $settings['twig'];
+
+            $options = $twigSettings['options'];
+            $options['cache'] = $options['cache_enabled'] ? $options['cache_path'] : false;
+
+            $twig = Twig::create($twigSettings['paths'], $options);
+            return $twig;
         },
     ]);
 };
