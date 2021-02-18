@@ -21,8 +21,6 @@ services:
         image: mariadb
         restart: always
         env_file: .env
-        volumes:
-            - ./dumps:/docker-entrypoint-initdb.d/:ro
         environment:
             MYSQL_ROOT_PASSWORD: esales
     adminer:
