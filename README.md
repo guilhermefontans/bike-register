@@ -38,7 +38,7 @@ Para a instalação em ambiente local, foi utilizado Docker e Docker Compose pel
 #### Instalação
 Tendo os pré-requisitos preenchidos, para a instalação é necessário seguir os seguintes passos:
 
-1. Fazer uma cópia do arquivo .env.dist para .env na raiz do projeto
+1. Fazer uma cópia do arquivo .env.dist para .env na raiz do projeto e alterar os dados de conexão de acordo com os dados do banco já existente.
 ```sh
 $ cp .env.dist .env
 ``` 
@@ -50,12 +50,13 @@ $ docker-compose up -d
 ```sh
 $ docker run  --rm  --volume $PWD:/app --user $(id -u):$(id -g)   composer install --ignore-platform-reqs
 ```
-4. Importar o dump da base de dados
+4. Rodar o comando abaixo para que seja criado a tabela que será utilizada:
 ```
-$ docker-compose exec -T db mysql  -pesales   < dumps/InitDB.sql
+$ docker exec bike-register_slim_1 php vendor/bin/phinx  migrate -e development
 ```
  
-Após efetuar esses passos, acessar o seguinte endereço em seu navegador: http://localhost:8000
+Após efetuar esses passos, acessar o seguinte endereço em seu navegador: http://localhost:8000 <br>
+Também é possível acessar a base de dados através da url http://localhost:8080
  
  
 #### Rotas disponíveis:
